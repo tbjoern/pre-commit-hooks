@@ -15,15 +15,22 @@ class ClangFormatCmd(FormatterCmd):
     def __init__(self, args):
         super().__init__(self.command, self.lookbehind, args)
         self.check_installed()
-        self.parse_args(args)
+        known_args = self.parse_args(args)
         self.edit_in_place = "-i" in self.args
+        self.silent = known_args.silent
+
+    def create_parser(self):
+        parser = super().create_parser()
+        parser.add_argument(['--silent', '-s'], dest='silent')
+        return parser
 
     def run(self):
         """Run clang-format. Error if diff is incorrect."""
         for filename in self.files:
             self.compare_to_formatted(filename)
         if self.returncode != 0:
-            sys.stdout.write(self.stderr)
+            if not self.silent:
+                sys.stdout.write(self.stderr)
             sys.exit(self.returncode)
 
 

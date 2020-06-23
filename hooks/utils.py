@@ -36,9 +36,7 @@ class Command:
 
     def parse_args(self, args):
         """Parse the args into usable variables"""
-        parser = argparse.ArgumentParser()
-        parser.add_argument("filenames", nargs="*", help="Filenames to check")
-        parser.add_argument("--version", nargs=1, help="Version check")
+        parser = self.create_parser()
         # Exclude this filename from args
         known_args, self.args = parser.parse_known_args(args)
         if "version" in known_args and known_args.version is not None:
@@ -46,6 +44,13 @@ class Command:
             actual_version = self.get_version_str()
             self.assert_version(actual_version, expected_version)
         self.files = known_args.filenames
+        return known_args
+
+    def create_parser(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("filenames", nargs="*", help="Filenames to check")
+        parser.add_argument("--version", nargs=1, help="Version check")
+        return parser
 
     def add_if_missing(self, new_args):
         """Add a default if it's missing from the command. This library
