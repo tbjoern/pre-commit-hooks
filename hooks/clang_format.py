@@ -21,7 +21,7 @@ class ClangFormatCmd(FormatterCmd):
 
     def create_parser(self):
         parser = super().create_parser()
-        parser.add_argument(['--silent', '-s'], dest='silent')
+        parser.add_argument('--silent', '-s', action='store_true', dest='silent')
         return parser
 
     def run(self):
